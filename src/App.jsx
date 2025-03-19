@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './App.module.css';
+import { formatDate, formatTime } from './utils';
 
 function App() {
   const [value, setValue] = useState('');
@@ -17,6 +18,14 @@ function App() {
     }
   };
 
+  const onAddButtonClick = () => {
+    if (isValueVaild) {
+      setList((l) => [...l, { id: Date.now(), value, date: new Date() }]);
+      setValue('');
+      setError('');
+    }
+  };
+
   return (
     <div className={styles.app}>
       <h1 className={styles['page-heading']}>Ввод значения</h1>
@@ -29,16 +38,27 @@ function App() {
         <button className={styles.button} onClick={onInputButtonClick}>
           Ввести новое
         </button>
-        <button className={styles.button} disabled={!isValueVaild}>
+        <button
+          className={styles.button}
+          disabled={!isValueVaild}
+          onClick={onAddButtonClick}
+        >
           Добавить в список
         </button>
       </div>
       <div className={styles['list-container']}>
         <h2 className={styles['list-heading']}>Список:</h2>
-        <p className={styles['no-margin-text']}>Нет добавленных элементов</p>
-        <ul className={styles.list}>
-          <li className={styles['list-item']}>Первый элемент</li>
-        </ul>
+        {!list.length ? (
+          <p className={styles['no-margin-text']}>Нет добавленных элементов</p>
+        ) : (
+          <ul className={styles.list}>
+            {list.map((item) => (
+              <li className={styles['list-item']} key={item.id}>
+                {item.value} - {formatDate(item.date)} {formatTime(item.date)}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
